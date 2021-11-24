@@ -2,4 +2,4 @@ help = run chbenchmark
 abbr = r
 
 [dep]
-java17 = to deploy cluster
+java = to deploy cluster
