@@ -1,0 +1,22 @@
+help = run chbenchmark
+abbr = r
+
+[arg]
+cluster-name|cluster|name|n|N = ''
+user|u|U = root
+chbench_path|cp = ''
+scalefactor|sf = ''
+
+[arg2env]
+tidb.cluster = cluster-name
+chbench.chbench_path = chbench_path
+chbench.scalefactor = scalefactor
+
+
+[env]
+tidb.cluster = read
+chbench.chbench_path = read
+chbench.scalefactor = read
+
+[dep]
+java = to deploy cluster
