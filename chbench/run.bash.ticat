@@ -15,7 +15,6 @@ chbench.scalefactor = scalefactor
 
 [env]
 tidb.cluster = read
-chbench.classpath = read
 chbench.chbench_path = read
 chbench.scalefactor = read
 
