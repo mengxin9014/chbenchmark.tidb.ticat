@@ -62,7 +62,7 @@ do
 
   for query in $querys
   do
-    cat  ${loadconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${wd}<\/scalefactor>/g" > load_config_temp.xml
+    cat  ${loadconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${wd}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" > load_config_temp.xml
     java -jar ${jarfile} -b tpcc,chbenchmark -c load_config_temp.xml --create=true --load=true --execute=false
 
     wait_table benchbase "$tables" "mysql --host $host --port $port -u root -e"
