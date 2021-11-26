@@ -47,7 +47,7 @@ ap_threads="1 5 10 20 30"
 url="jdbc:mysql:\/\/${host}:${port}\/benchbase?rewriteBatchedStatements=true"
 tables="CUSTOMER ITEM HISTORY DISTRICT NEW_ORDER OORDER ORDER_LINE STOCK WAREHOUSE nation region supplier"
 
-echo mysql --host ${host} --port $port -u root -e "create database if not exists benchbase"
+mysql --host ${host} --port $port -u root -e "create database if not exists benchbase"
 
 cd ${chbench_path}
 
