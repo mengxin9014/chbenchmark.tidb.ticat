@@ -39,10 +39,10 @@ result_dir="${chbench_path}/result"
 if [ -d "$result_dir" ]
 then
 	echo $result_dir already exists
-else
-  mkdir $result_dir
+	rm -rf ${chbench_path}/result
 fi
 
+mkdir $result_dir
 ap_threads="1 5 10 20 30"
 url="jdbc:mysql:\/\/${host}:${port}\/benchbase?rewriteBatchedStatements=true"
 tables="CUSTOMER ITEM HISTORY DISTRICT NEW_ORDER OORDER ORDER_LINE STOCK WAREHOUSE nation region supplier"
