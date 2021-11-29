@@ -1,5 +1,5 @@
 help = run chbenchmark
-abbr = r
+abbr = l
 
 [arg]
 cluster-name|cluster|name|n|N = ''
