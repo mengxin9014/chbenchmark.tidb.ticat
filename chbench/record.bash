@@ -4,10 +4,7 @@ env_file="${1}/env"
 env=`cat "${env_file}"`
 shift
 
-shift
-user="${1}"
-chbench_path="${2}"
-
+chbench_path=`must_env_val "${env}" 'chbench.chbench_path'`
 result_dir="${chbench_path}/result"
 record_dir="${chbench_path}/record"
 

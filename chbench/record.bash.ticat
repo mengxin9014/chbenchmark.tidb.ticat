@@ -2,7 +2,6 @@ help = record chbenchmark result
 abbr = rd
 
 [arg]
-user|u|U = root
 chbench_path|cp = ''
 
 
@@ -10,7 +9,6 @@ chbench_path|cp = ''
 chbench.chbench_path = chbench_path
 
 [env]
-tidb.cluster = read
 chbench.chbench_path = read
 
 [dep]
