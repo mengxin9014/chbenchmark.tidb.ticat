@@ -50,6 +50,6 @@ do
    done
    if [ ${ap} -ne 1 ]
    then
-     echo -e "qps_line" >> $record_dir/ch_benchmark_small_query_test.txt
+     echo -e $qps_line >> $record_dir/ch_benchmark_small_query_test.txt
    fi
 done
