@@ -8,6 +8,8 @@ scalefactor|sf = ''
 host|h|H = 127.0.0.1
 port|p|P = 4000
 user|u|U = root
+pd_host|ph|pH|PH = 127.0.0.1
+pd_port|pp|pP|PP = 2379
 
 [arg2env]
 
@@ -16,6 +18,8 @@ chbench.scalefactor = scalefactor
 mysql.host = host
 mysql.port = port
 mysql.user = user
+pd.host = pd_host
+pd.port = pd_port
 
 [env]
 chbench.chbench_path = read
@@ -23,6 +27,8 @@ chbench.scalefactor = read
 mysql.host = read
 mysql.port = read
 mysql.user = read
+pd.host = read
+pd.port = read
 
 [dep]
 java = to deploy cluster

@@ -8,6 +8,8 @@ sf=`must_env_val "${env}" 'chbench.scalefactor'`
 host=`must_env_val "${env}" 'mysql.host'`
 port=`must_env_val "${env}" 'mysql.port'`
 user=`must_env_val "${env}" 'mysql.user'`
+pd_host=`must_env_val "${env}" 'pd.host'`
+pd_port=`must_env_val "${env}" 'pd.port'`
 
 br_storage="${1}"
 
@@ -93,7 +95,7 @@ do
   do
     if [ ${br_storage} != "" ]
     then
-      AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin br restore db --pd 10.233.75.203:2379 --db benchbase -s ${br_storage} --s3.endpoint http://minio.pingcap.net:9000 --send-credentials-to-tikv=true
+      AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin br restore db --pd ${pd_host}:${pd_port} --db benchbase -s ${br_storage} --s3.endpoint http://minio.pingcap.net:9000 --send-credentials-to-tikv=true
       br_wait_table benchbase "$tables" "mysql --host $host --port $port -u root -e"
     else
       cat  ${loadconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" > load_config_temp.xml
