@@ -40,16 +40,17 @@ function br_wait_table()
   count_table=""
   for table in $tables
   do
+      $mysql_client "LOAD STATS '$chbench_path/benchbase_table_static/$table.json'"
       count_table="${count_table};select count(*) from benchbase.$table"
   done
 
   while true
   do
     if [ ${time} -eq ${time_out} ]
-        then
-          echo "br wait tiflash table failed!"
-          exit 1
-        fi
+    then
+      echo "br wait tiflash table failed!"
+      exit 1
+    fi
     $mysql_client "set tidb_isolation_read_engines='tiflash'${count_table}"
     if [ ${?} -eq 0 ]
     then
