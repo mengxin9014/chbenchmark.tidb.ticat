@@ -12,6 +12,7 @@ pd_host=`must_env_val "${env}" 'pd.host'`
 pd_port=`must_env_val "${env}" 'pd.port'`
 
 br_storage="${1}"
+duration="${2}"
 
 function wait_table()
 {
@@ -57,10 +58,9 @@ function br_wait_table()
       break
     else
       sleep 1
-      time=${time}+1
+      time=$(expr $time + 1)
     fi
   done
-
 }
 
 loadconfig="${chbench_path}/config/tidb/chbenchmark_config_base.xml"
@@ -103,10 +103,10 @@ do
       java -jar ${jarfile} -b tpcc,chbenchmark -c load_config_temp.xml --create=true --load=true --execute=false
       wait_table benchbase "$tables" "mysql --host $host --port $port -u root -e"
     fi
-    cat ${tpconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" > tp_config_temp.xml
+    cat ${tpconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<time>.*<\/time>/<time>${duration}<\/time>/g" > tp_config_temp.xml
     java -jar ${jarfile} -b tpcc -c tp_config_temp.xml --create=false --load=false --execute=true -d $result_dir/outputfile_tidb_query_${query}_ap_${ap}_tp &
 
-  	cat ${apconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<name>.*<\/name>/<name>${query}<\/name>/g" | sed "s/<active_terminals bench=\"chbenchmark\">.*<\/active_terminals>/<active_terminals bench=\"chbenchmark\">${ap}<\/active_terminals>/g" | sed "s/<terminals>.*<\/terminals>/<terminals>${ap}<\/terminals>/g" > ap_config_temp.xml
+  	cat ${apconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<time>.*<\/time>/<time>${duration}<\/time>/g" | sed "s/<name>.*<\/name>/<name>${query}<\/name>/g" | sed "s/<active_terminals bench=\"chbenchmark\">.*<\/active_terminals>/<active_terminals bench=\"chbenchmark\">${ap}<\/active_terminals>/g" | sed "s/<terminals>.*<\/terminals>/<terminals>${ap}<\/terminals>/g" > ap_config_temp.xml
     java -jar ${jarfile} -b chbenchmark -c ap_config_temp.xml --create=false --load=false --execute=true -d $result_dir/outputfile_tidb_query_${query}_ap_${ap}_ap &
     wait
   done

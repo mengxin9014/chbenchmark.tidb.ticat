@@ -1,11 +1,12 @@
-help = run chbenchmark
+help = run write throughput test
 abbr = r
 
 [arg]
 br_storage = ''
-duration = 60
+thread|t = ''
+table_num|tm = ''
+duration
 chbench_path|cp = ''
-scalefactor|sf = ''
 host|h|H = 127.0.0.1
 port|p|P = 4000
 user|u|U = root
@@ -14,8 +15,8 @@ pd_port|pp|pP|PP = 2379
 
 [arg2env]
 
-chbench.chbench_path = chbench_path
-chbench.scalefactor = scalefactor
+write_throughput.chbench_path = chbench_path
+write_throughput.thread = thread
 mysql.host = host
 mysql.port = port
 mysql.user = user
@@ -23,8 +24,8 @@ pd.host = pd_host
 pd.port = pd_port
 
 [env]
-chbench.chbench_path = read
-chbench.scalefactor = read
+write_throughput.chbench_path = read
+write_throughput.thread = read
 mysql.host = read
 mysql.port = read
 mysql.user = read
