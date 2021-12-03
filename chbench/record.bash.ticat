@@ -2,6 +2,8 @@ help = record chbenchmark result
 abbr = rd
 
 [arg]
+query|q = ''
+thread|t = 1
 chbench_path|cp = ''
 
 

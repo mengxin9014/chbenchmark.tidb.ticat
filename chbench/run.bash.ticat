@@ -2,8 +2,10 @@ help = run chbenchmark
 abbr = r
 
 [arg]
-br_storage = ''
-duration = 60
+br_storage|bs = ''
+duration|d = 60
+query|q = ''
+thread|t = 1
 chbench_path|cp = ''
 scalefactor|sf = ''
 host|h|H = 127.0.0.1
