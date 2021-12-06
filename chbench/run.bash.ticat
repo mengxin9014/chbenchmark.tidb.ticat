@@ -15,7 +15,8 @@ pd_host|ph|pH|PH = 127.0.0.1
 pd_port|pp|pP|PP = 2379
 
 [arg2env]
-
+chbench.query = query
+chbench.thread = thread
 chbench.chbench_path = chbench_path
 chbench.scalefactor = scalefactor
 mysql.host = host

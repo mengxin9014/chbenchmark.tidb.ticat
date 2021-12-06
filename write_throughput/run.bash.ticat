@@ -3,10 +3,11 @@ abbr = r
 
 [arg]
 br_storage = ''
-thread|t = ''
 table_num|tm = ''
-duration
+table_size|ts = ''
+duration = 60
 chbench_path|cp = ''
+thread|t = ''
 host|h|H = 127.0.0.1
 port|p|P = 4000
 user|u|U = root

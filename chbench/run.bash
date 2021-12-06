@@ -3,6 +3,8 @@
 env_file="${1}/env"
 env=`cat "${env_file}"`
 shift
+query=`must_env_val "${env}" 'chbench.query'`
+thread=`must_env_val "${env}" 'chbench.thread'`
 chbench_path=`must_env_val "${env}" 'chbench.chbench_path'`
 sf=`must_env_val "${env}" 'chbench.scalefactor'`
 host=`must_env_val "${env}" 'mysql.host'`
@@ -13,8 +15,6 @@ pd_port=`must_env_val "${env}" 'pd.port'`
 
 br_storage="${1}"
 duration="${2}"
-query="${3}"
-thread="${4}"
 
 function wait_table()
 {
@@ -114,7 +114,7 @@ cd ${chbench_path}
 #  done
 #done
 
-if [ ${br_storage} != "" ]
+if [ "${br_storage}" != "" ]
 then
   AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin br restore db --pd ${pd_host}:${pd_port} --db benchbase -s ${br_storage} --s3.endpoint http://minio.pingcap.net:9000 --send-credentials-to-tikv=true
   br_wait_table benchbase "$tables" "mysql --host $host --port $port -u root -e"

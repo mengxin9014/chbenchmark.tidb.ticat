@@ -57,19 +57,19 @@ apThreads="1 5 10 20 30"
 #   fi
 #done
 
-if [ ${thread} -ne 1 ]
-then
-  qps=$(grep Throughput $result_dir/outputfile_tidb_query_${query}_ap_${thread}_ap/chbenchmark_*.summary.json | awk -F':' '{print $NF}')
-  qps_line="$qps_line$qps\t"
-else
-  qps=$(grep Throughput $result_dir/outputfile_tidb_query_${query}_ap_${thread}_ap/chbenchmark_*.summary.json | awk -F':' '{print $NF}')
-  tps=$(grep Throughput $result_dir/outputfile_tidb_query_${query}_ap_${thread}_tp/tpcc_*.summary.json | awk -F':' '{print $NF}')
-  ap_avg_rt=$(grep "Average Latency" $result_dir/outputfile_tidb_query_${query}_ap_${thread}_ap/chbenchmark_*.summary.json | awk -F':' '{print $NF}')
-  tp_p99_rt=$(grep 99th $result_dir/outputfile_tidb_query_${query}_ap_${thread}_tp/tpcc_*.summary.json | awk -F':' '{print $NF}' | sed 's/,//g')
-  echo -e "$query\t$ap_avg_rt\t$tp_p99_rt\t$qps\t$tps" >> $record_dir/ch_benchmark_test.txt
-fi
-
-if [ ${thread} -ne 1 ]
-then
-  echo -e $qps_line >> $record_dir/ch_benchmark_small_query_test.txt
-fi
+#if [ ${thread} -ne 1 ]
+#then
+#  qps=$(grep Throughput $result_dir/outputfile_tidb_query_${query}_ap_${thread}_ap/chbenchmark_*.summary.json | awk -F':' '{print $NF}')
+#  qps_line="$qps_line$qps\t"
+#else
+qps=$(grep Throughput $result_dir/outputfile_tidb_query_${query}_ap_${thread}_ap/chbenchmark_*.summary.json | awk -F':' '{print $NF}')
+tps=$(grep Throughput $result_dir/outputfile_tidb_query_${query}_ap_${thread}_tp/tpcc_*.summary.json | awk -F':' '{print $NF}')
+ap_avg_rt=$(grep "Average Latency" $result_dir/outputfile_tidb_query_${query}_ap_${thread}_ap/chbenchmark_*.summary.json | awk -F':' '{print $NF}')
+tp_p99_rt=$(grep 99th $result_dir/outputfile_tidb_query_${query}_ap_${thread}_tp/tpcc_*.summary.json | awk -F':' '{print $NF}' | sed 's/,//g')
+echo -e "$query\t$ap_avg_rt\t$tp_p99_rt\t$qps\t$tps" >> $record_dir/ch_benchmark_test.txt
+#fi
+#
+#if [ ${thread} -ne 1 ]
+#then
+#  echo -e $qps_line >> $record_dir/ch_benchmark_small_query_test.txt
+#fi
