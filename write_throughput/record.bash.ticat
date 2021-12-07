@@ -3,15 +3,11 @@ abbr = rd
 
 [arg]
 chbench_path|cp = ''
-thread|t = ''
-
 
 [arg2env]
 write_throughput.chbench_path = chbench_path
-write_throughput.thread = thread
 
 [env]
 write_throughput.chbench_path = read
-write_throughput.thread = read
 
 [dep]

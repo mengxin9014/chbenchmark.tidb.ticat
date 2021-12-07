@@ -5,7 +5,6 @@ env=`cat "${env_file}"`
 shift
 
 chbench_path=`must_env_val "${env}" 'write_throughput.chbench_path'`
-thread=`must_env_val "${env}" 'write_throughput.thread'`
 
 result_dir="${chbench_path}/result"
 record_dir="${chbench_path}/record"
@@ -18,8 +17,8 @@ fi
 
 rm -rf $record_dir/write_throughput_test.txt
 
-echo -e "thread\tApQPS\tRT_P99(μs)" > $record_dir/write_throughput_test.txt
+echo -e "tApQPS\tRT_P99(μs)" > $record_dir/write_throughput_test.txt
 
 qps=$(grep Throughput $result_dir/write_throughput_table_result/chbenchmark_*.summary.json | awk -F':' '{print $NF}')
 p99_rt=$(grep 99th $result_dir/write_throughput_table_result/chbenchmark_*.summary.json | awk -F':' '{print $NF}' | sed 's/,//g')
-echo -e "$thread\t$qps\t$p99_rt" >> $record_dir/write_throughput_test.txt
+echo -e "$qps\t$p99_rt" >> $record_dir/write_throughput_test.txt

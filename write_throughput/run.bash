@@ -59,7 +59,7 @@ function br_wait_table()
   done
 }
 
-echo -e "mysql-host=$ip" > ./sysbench.config
+echo -e "mysql-host=$host" > ./sysbench.config
 echo -e "mysql-port=$port" >> ./sysbench.config
 echo -e "mysql-user=root" >> ./sysbench.config
 echo -e "mysql-password=" >> ./sysbench.config
@@ -79,11 +79,11 @@ url="jdbc:mysql:\/\/${host}:${port}\/benchbase?rewriteBatchedStatements=true"
 
 cat config/tidb/querys/chbenchmark_config_sbtest_base.xml  | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<tableNumber>.*<\/tableNumber>/<tableNumber>${table_number}<\/tableNumber>/g" > config/tidb/querys/chbenchmark_config_sbtest.xml
 
-mysql --host $ip --port $port -u root -e "drop database if exists sbtest"
-mysql --host $ip --port $port -u root -e "set global tidb_disable_txn_auto_retry=off"
+mysql --host $host --port $port -u root -e "drop database if exists sbtest"
+mysql --host $host --port $port -u root -e "set global tidb_disable_txn_auto_retry=off"
 AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin br restore db --pd ${pd_host}:${pd_port} --db sbtest -s ${br_storage} --s3.endpoint http://minio.pingcap.net:9000 --send-credentials-to-tikv=true
-br_wait_table sbtest "$tables" "mysql --host $ip --port $port -u root -e"
+br_wait_table sbtest "$tables" "mysql --host $host --port $port -u root -e"
 
 sysbench --config-file=./sysbench.config oltp_write_only --tables=$table_number --table-size=$table_size run &
-java -jar benchbase.jar -b chbenchmark -c config/tidb/querys/chbenchmark_config_sbtest.xml  --create=false --load=false --execute=true -d $resultDir/write_throughput_table_result &
+java -jar benchbase.jar -b chbenchmark -c config/tidb/querys/chbenchmark_config_sbtest.xml  --create=false --load=false --execute=true -d $result_dir/write_throughput_table_result &
 wait
