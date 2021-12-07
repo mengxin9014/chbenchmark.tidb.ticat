@@ -63,6 +63,13 @@ function br_wait_table()
       time=$(expr $time + 1)
     fi
   done
+
+  if [ -f "$chbench_path/querys_map.txt" ]
+  then
+    sql=$(cat $chbench_path/querys_map.txt | grep -w $query | awk -F "#" '{print $2}')
+    echo "$query explain:"
+    $mysql_client "use benchbase;explain $sql"
+  fi
 }
 
 loadconfig="${chbench_path}/config/tidb/chbenchmark_config_base.xml"
