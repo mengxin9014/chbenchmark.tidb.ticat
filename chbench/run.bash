@@ -17,27 +17,11 @@ br_storage="${1}"
 duration="${2}"
 db_name="${3}"
 
-function wait_table()
-{
-  local database="$1"
-  local tables="$2"
-  local mysql_client="$3"
-  local tiflash_replica=1
-
-  for table in $tables
-  do
-    $mysql_client "alter table $db_name.$table set tiflash replica $tiflash_replica"
-    $mysql_client "analyze table $db_name.$table"
-  done
-	python2 ${chbench_path}/scripts/wait_tiflash_table_available.py "$database" $tables "$mysql_client" ; return $?
-}
-
 function br_wait_table()
 {
   local database="$1"
   local tables="$2"
   local mysql_client="$3"
-  local tiflash_replica=1
   local time_out=3600
   time=0
 
@@ -73,7 +57,6 @@ function br_wait_table()
   fi
 }
 
-loadconfig="${chbench_path}/config/tidb/chbenchmark_config_base.xml"
 apconfig="${chbench_path}/config/tidb/querys/chbenchmark_config_ap_base.xml"
 tpconfig="${chbench_path}/config/tidb/querys/chbenchmark_config_tp_base.xml"
 jarfile="${chbench_path}/benchbase.jar"
@@ -97,9 +80,8 @@ then
   AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin br restore db --pd ${pd_host}:${pd_port} --db $db_name -s ${br_storage} --s3.endpoint http://minio.pingcap.net:9000 --send-credentials-to-tikv=true
   br_wait_table $db_name "$tables" "mysql --host $host --port $port -u root -e"
 else
-  cat  ${loadconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" > load_config_temp.xml
-  java -jar ${jarfile} -b tpcc,chbenchmark -c load_config_temp.xml --create=true --load=true --execute=false
-  wait_table $db_name "$tables" "mysql --host $host --port $port -u root -e"
+  echo br_storage should not be null.
+  exit 1
 fi
 cat ${tpconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<time>.*<\/time>/<time>${duration}<\/time>/g" > tp_config_temp.xml
 java -jar ${jarfile} -b tpcc -c tp_config_temp.xml --create=false --load=false --execute=true -d $result_dir/outputfile_tidb_query_${query}_ap_${thread}_tp &

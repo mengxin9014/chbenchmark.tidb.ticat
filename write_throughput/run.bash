@@ -34,14 +34,12 @@ function br_wait_table()
   local database="$1"
   local tables="$2"
   local mysql_client="$3"
-  local tiflash_replica=1
   local time_out=3600
   time=0
 
   count_table=""
   for table in $tables
   do
-      $mysql_client "LOAD STATS '$chbench_path/sbtest_table_static/$table.json'"
       count_table="${count_table};select count(*) from $database.$table"
   done
 
