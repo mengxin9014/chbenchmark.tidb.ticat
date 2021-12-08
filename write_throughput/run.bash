@@ -61,6 +61,8 @@ function br_wait_table()
   done
 }
 
+cd ${chbench_path}
+
 echo -e "mysql-host=$host" > ./sysbench.config
 echo -e "mysql-port=$port" >> ./sysbench.config
 echo -e "mysql-user=root" >> ./sysbench.config
