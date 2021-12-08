@@ -15,6 +15,7 @@ pd_port=`must_env_val "${env}" 'pd.port'`
 
 br_storage="${1}"
 duration="${2}"
+db_name="${3}"
 
 function wait_table()
 {
@@ -25,8 +26,8 @@ function wait_table()
 
   for table in $tables
   do
-    $mysql_client "alter table benchbase.$table set tiflash replica $tiflash_replica"
-    $mysql_client "analyze table benchbase.$table"
+    $mysql_client "alter table $db_name.$table set tiflash replica $tiflash_replica"
+    $mysql_client "analyze table $db_name.$table"
   done
 	python2 ${chbench_path}/scripts/wait_tiflash_table_available.py "$database" $tables "$mysql_client" ; return $?
 }
@@ -44,7 +45,7 @@ function br_wait_table()
   for table in $tables
   do
       $mysql_client "LOAD STATS '$chbench_path/benchbase_table_static/$table.json'"
-      count_table="${count_table};select count(*) from benchbase.$table"
+      count_table="${count_table};select count(*) from $database.$table"
   done
 
   while true
@@ -68,7 +69,7 @@ function br_wait_table()
   then
     sql=$(cat $chbench_path/querys_map.txt | grep -w $query | awk -F "#" '{print $2}')
     echo "$query explain:"
-    $mysql_client "use benchbase;explain $sql"
+    $mysql_client "use $database;explain $sql"
   fi
 }
 
@@ -84,51 +85,21 @@ then
 fi
 
 mkdir $result_dir
-ap_threads="1 5 10 20 30"
-url="jdbc:mysql:\/\/${host}:${port}\/benchbase?rewriteBatchedStatements=true"
+url="jdbc:mysql:\/\/${host}:${port}\/$db_name?rewriteBatchedStatements=true"
 tables="CUSTOMER ITEM HISTORY DISTRICT NEW_ORDER OORDER ORDER_LINE STOCK WAREHOUSE nation region supplier"
 
-mysql --host ${host} --port $port -u root -e "create database if not exists benchbase"
+mysql --host ${host} --port $port -u root -e "create database if not exists $db_name"
 
 cd ${chbench_path}
 
-#for ap in $ap_threads
-#do
-#  if [ ${ap} -ne 1 ]
-#  then
-#    querys="Q6 Q12 Q13 Q14"
-#  else
-#    querys="Q1 Q2 Q3 Q4 Q5 Q6 Q7 Q8 Q9 Q10 Q11 Q12 Q13 Q14 Q15 Q16 Q17 Q18 Q19 Q20 Q21 Q22"
-#  fi
-
-#  for query in $querys
-#  do
-#    if [ ${br_storage} != "" ]
-#    then
-#      AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin br restore db --pd ${pd_host}:${pd_port} --db benchbase -s ${br_storage} --s3.endpoint http://minio.pingcap.net:9000 --send-credentials-to-tikv=true
-#      br_wait_table benchbase "$tables" "mysql --host $host --port $port -u root -e"
-#    else
-#      cat  ${loadconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" > load_config_temp.xml
-#      java -jar ${jarfile} -b tpcc,chbenchmark -c load_config_temp.xml --create=true --load=true --execute=false
-#      wait_table benchbase "$tables" "mysql --host $host --port $port -u root -e"
-#    fi
-#    cat ${tpconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<time>.*<\/time>/<time>${duration}<\/time>/g" > tp_config_temp.xml
-#    java -jar ${jarfile} -b tpcc -c tp_config_temp.xml --create=false --load=false --execute=true -d $result_dir/outputfile_tidb_query_${query}_ap_${ap}_tp &
-#
-#  	cat ${apconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<time>.*<\/time>/<time>${duration}<\/time>/g" | sed "s/<name>.*<\/name>/<name>${query}<\/name>/g" | sed "s/<active_terminals bench=\"chbenchmark\">.*<\/active_terminals>/<active_terminals bench=\"chbenchmark\">${ap}<\/active_terminals>/g" | sed "s/<terminals>.*<\/terminals>/<terminals>${ap}<\/terminals>/g" > ap_config_temp.xml
-#    java -jar ${jarfile} -b chbenchmark -c ap_config_temp.xml --create=false --load=false --execute=true -d $result_dir/outputfile_tidb_query_${query}_ap_${ap}_ap &
-#    wait
-#  done
-#done
-
 if [ "${br_storage}" != "" ]
 then
-  AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin br restore db --pd ${pd_host}:${pd_port} --db benchbase -s ${br_storage} --s3.endpoint http://minio.pingcap.net:9000 --send-credentials-to-tikv=true
-  br_wait_table benchbase "$tables" "mysql --host $host --port $port -u root -e"
+  AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin br restore db --pd ${pd_host}:${pd_port} --db $db_name -s ${br_storage} --s3.endpoint http://minio.pingcap.net:9000 --send-credentials-to-tikv=true
+  br_wait_table $db_name "$tables" "mysql --host $host --port $port -u root -e"
 else
   cat  ${loadconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" > load_config_temp.xml
   java -jar ${jarfile} -b tpcc,chbenchmark -c load_config_temp.xml --create=true --load=true --execute=false
-  wait_table benchbase "$tables" "mysql --host $host --port $port -u root -e"
+  wait_table $db_name "$tables" "mysql --host $host --port $port -u root -e"
 fi
 cat ${tpconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<time>.*<\/time>/<time>${duration}<\/time>/g" > tp_config_temp.xml
 java -jar ${jarfile} -b tpcc -c tp_config_temp.xml --create=false --load=false --execute=true -d $result_dir/outputfile_tidb_query_${query}_ap_${thread}_tp &

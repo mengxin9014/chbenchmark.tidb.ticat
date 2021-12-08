@@ -4,10 +4,11 @@ abbr = r
 [arg]
 br_storage|bs = ''
 duration|d = 60
+db_name|dn = 'benchbase'
 query|q = ''
 thread|t = 1
 chbench_path|cp = ''
-scalefactor|sf = ''
+scalefactor|sf = 1
 host|h|H = 127.0.0.1
 port|p|P = 4000
 user|u|U = root

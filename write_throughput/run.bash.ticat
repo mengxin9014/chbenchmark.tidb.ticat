@@ -5,7 +5,8 @@ abbr = r
 br_storage = ''
 table_num|tn = ''
 table_size|ts = ''
-duration = 60
+duration|d = 60
+db_name|dn = 'sbtest'
 chbench_path|cp = ''
 thread|t = ''
 host|h|H = 127.0.0.1
@@ -36,3 +37,4 @@ pd.port = read
 [dep]
 java = to deploy cluster
 br = to restore data
+sysbench = to run sysbench
