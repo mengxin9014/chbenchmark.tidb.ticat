@@ -45,7 +45,7 @@ function br_wait_table()
 
   while true
   do
-    if [ ${time} -eq ${time_out} ]
+    if [ "${time}" -eq ${time_out} ]
     then
       echo "br wait tiflash table failed!"
       exit 1
