@@ -3,7 +3,7 @@ abbr = r
 
 [arg]
 br_storage = ''
-table_num|tm = ''
+table_num|tn = ''
 table_size|ts = ''
 duration = 60
 chbench_path|cp = ''

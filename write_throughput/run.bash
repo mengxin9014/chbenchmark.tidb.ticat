@@ -77,7 +77,7 @@ do
 done
 url="jdbc:mysql:\/\/${host}:${port}\/benchbase?rewriteBatchedStatements=true"
 
-cat config/tidb/querys/chbenchmark_config_sbtest_base.xml  | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<tableNumber>.*<\/tableNumber>/<tableNumber>${table_number}<\/tableNumber>/g" > config/tidb/querys/chbenchmark_config_sbtest.xml
+cat config/tidb/querys/chbenchmark_config_sbtest_base.xml | sed "s/<time>.*<\/time>/<time>${duration}<\/time>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<tableNumber>.*<\/tableNumber>/<tableNumber>${table_number}<\/tableNumber>/g" > config/tidb/querys/chbenchmark_config_sbtest.xml
 
 mysql --host $host --port $port -u root -e "drop database if exists sbtest"
 mysql --host $host --port $port -u root -e "set global tidb_disable_txn_auto_retry=off"
