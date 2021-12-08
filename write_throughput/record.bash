@@ -15,7 +15,7 @@ then
 	rm -rf ${chbench_path}/record
 fi
 
-rm -rf $record_dir/write_throughput_test.txt
+mkdir $record_dir
 
 echo -e "tApQPS\tRT_P99(μs)" > $record_dir/write_throughput_test.txt
 
