@@ -56,7 +56,7 @@ function br_wait_table()
       break
     else
       sleep 1
-      time=${time}+1
+      time=$(expr $time + 1)
     fi
   done
 }
