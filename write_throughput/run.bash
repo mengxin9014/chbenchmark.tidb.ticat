@@ -85,7 +85,7 @@ cat ${ap_config} | sed "s/<time>.*<\/time>/<time>${duration}<\/time>/g" | sed "s
 
 mysql --host $host --port $port -u root -e "drop database if exists $db_name"
 mysql --host $host --port $port -u root -e "set global tidb_disable_txn_auto_retry=off"
-AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin br restore db --pd ${pd_host}:${pd_port} --db test -s ${br_storage} --s3.endpoint http://minio.pingcap.net:9000 --send-credentials-to-tikv=true
+AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin br restore db --pd ${pd_host}:${pd_port} --db $db_name -s ${br_storage} --s3.endpoint http://minio.pingcap.net:9000 --send-credentials-to-tikv=true
 br_wait_table $db_name "$tables" "mysql --host $host --port $port -u root -e"
 
 sysbench --config-file=./sysbench.config oltp_write_only --tables=$table_number --table-size=$table_size run &
