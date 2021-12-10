@@ -1,3 +1,4 @@
+set -euo pipefail
 . "`cd $(dirname ${BASH_SOURCE[0]}) && pwd`/../helper/helper.bash"
 
 env_file="${1}/env"
@@ -50,8 +51,9 @@ function br_wait_table()
       echo "br wait tiflash table failed!"
       exit 1
     fi
-    $mysql_client "set tidb_isolation_read_engines='tiflash'${count_table}"
-    if [ ${?} -eq 0 ]
+    ret=0
+    $mysql_client "set tidb_isolation_read_engines='tiflash'${count_table}" || ret=$?
+    if [ ${ret} -eq 0 ]
     then
       break
     else
@@ -91,3 +93,6 @@ br_wait_table $db_name "$tables" "mysql --host $host --port $port -u root -e"
 sysbench --config-file=./sysbench.config oltp_write_only --tables=$table_number --table-size=$table_size run &
 java -jar $jarfile -b chbenchmark -c ap_config_temp.xml  --create=false --load=false --execute=true -d $result_dir/write_throughput_table_result &
 wait
+
+rm -rf ap_config_temp.xml
+rm -rf sysbench.config

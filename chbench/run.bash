@@ -1,3 +1,4 @@
+set -euo pipefail
 . "`cd $(dirname ${BASH_SOURCE[0]}) && pwd`/../helper/helper.bash"
 
 env_file="${1}/env"
@@ -39,8 +40,9 @@ function br_wait_table()
       echo "br wait tiflash table failed!"
       exit 1
     fi
-    $mysql_client "set tidb_isolation_read_engines='tiflash'${count_table}"
-    if [ ${?} -eq 0 ]
+    ret=0
+    $mysql_client "set tidb_isolation_read_engines='tiflash'${count_table}" || ret=$?
+    if [ ${ret} -eq 0 ]
     then
       break
     else

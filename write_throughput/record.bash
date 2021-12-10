@@ -1,3 +1,4 @@
+set -euo pipefail
 . "`cd $(dirname ${BASH_SOURCE[0]}) && pwd`/../helper/helper.bash"
 
 env_file="${1}/env"
@@ -17,7 +18,7 @@ fi
 
 mkdir $record_dir
 
-echo -e "tApQPS\tRT_P99(μs)" > $record_dir/write_throughput_test.txt
+echo -e "ApQPS\tRT_P99(μs)" > $record_dir/write_throughput_test.txt
 
 qps=$(grep Throughput $result_dir/write_throughput_table_result/chbenchmark_*.summary.json | awk -F':' '{print $NF}')
 p99_rt=$(grep 99th $result_dir/write_throughput_table_result/chbenchmark_*.summary.json | awk -F':' '{print $NF}' | sed 's/,//g')
