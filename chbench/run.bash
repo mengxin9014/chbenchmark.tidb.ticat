@@ -77,13 +77,12 @@ mysql --host ${host} --port $port -u root -e "create database if not exists $db_
 
 cd ${chbench_path}
 
-if [ "${br_storage}" != "" ]
+if [ "${br_storage}" != "none" ]
 then
   AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin br restore db --pd ${pd_host}:${pd_port} --db $db_name -s ${br_storage} --s3.endpoint http://minio.pingcap.net:9000 --send-credentials-to-tikv=true
   br_wait_table $db_name "$tables" "mysql --host $host --port $port -u root -e"
 else
-  echo br_storage should not be null.
-  exit 1
+  echo skip restore data.
 fi
 cat ${tpconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<time>.*<\/time>/<time>${duration}<\/time>/g" > tp_config_temp.xml
 java -jar ${jarfile} -b tpcc -c tp_config_temp.xml --create=false --load=false --execute=true -d $result_dir/outputfile_tidb_query_${query}_ap_${thread}_tp &

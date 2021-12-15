@@ -8,9 +8,13 @@ chbench_path|cp = ''
 
 
 [arg2env]
+chbench.query = query
+chbench.thread = thread
 chbench.chbench_path = chbench_path
 
 [env]
+chbench.query = read
+chbench.thread = read
 chbench.chbench_path = read
 
 [dep]

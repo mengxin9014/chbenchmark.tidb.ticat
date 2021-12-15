@@ -6,9 +6,9 @@ env=`cat "${env_file}"`
 shift
 
 chbench_path=`must_env_val "${env}" 'chbench.chbench_path'`
+query=`must_env_val "${env}" 'chbench.query'`
+thread=`must_env_val "${env}" 'chbench.thread'`
 
-query="${1}"
-thread="${2}"
 result_dir="${chbench_path}/result"
 record_dir="${chbench_path}/record"
 
