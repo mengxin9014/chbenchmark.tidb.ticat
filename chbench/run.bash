@@ -50,13 +50,6 @@ function br_wait_table()
       time=$(expr $time + 1)
     fi
   done
-
-  if [ -f "$chbench_path/querys_map.txt" ]
-  then
-    sql=$(cat $chbench_path/querys_map.txt | grep -w $query | awk -F "#" '{print $2}')
-    echo "$query explain:"
-    $mysql_client "use $database;explain $sql"
-  fi
 }
 
 apconfig="${chbench_path}/config/tidb/querys/chbenchmark_config_ap_base.xml"
@@ -84,12 +77,19 @@ then
 else
   echo skip restore data.
 fi
+
 cat ${tpconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<time>.*<\/time>/<time>${duration}<\/time>/g" > tp_config_temp.xml
 java -jar ${jarfile} -b tpcc -c tp_config_temp.xml --create=false --load=false --execute=true -d $result_dir/outputfile_tidb_query_${query}_ap_${thread}_tp &
 
 cat ${apconfig} | sed "s/<scalefactor>.*<\/scalefactor>/<scalefactor>${sf}<\/scalefactor>/g" | sed "s/<url>.*<\/url>/<url>${url}<\/url>/g" | sed "s/<time>.*<\/time>/<time>${duration}<\/time>/g" | sed "s/<name>.*<\/name>/<name>${query}<\/name>/g" | sed "s/<active_terminals bench=\"chbenchmark\">.*<\/active_terminals>/<active_terminals bench=\"chbenchmark\">${thread}<\/active_terminals>/g" | sed "s/<terminals>.*<\/terminals>/<terminals>${thread}<\/terminals>/g" > ap_config_temp.xml
 java -jar ${jarfile} -b chbenchmark -c ap_config_temp.xml --create=false --load=false --execute=true -d $result_dir/outputfile_tidb_query_${query}_ap_${thread}_ap &
 wait
+
+if [ -f "$chbench_path/querys_map.txt" ]
+then
+  sql=$(cat $chbench_path/querys_map.txt | grep -w $query | awk -F "#" '{print $2}')
+  $mysql_client "use $database;explain analyze $sql" > $result_dir/${query}_analyze.txt
+fi
 
 rm -rf load_config_temp.xml
 rm -rf ap_config_temp.xml

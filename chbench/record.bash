@@ -28,3 +28,4 @@ tps=$(grep Throughput $result_dir/outputfile_tidb_query_${query}_ap_${thread}_tp
 ap_avg_rt=$(grep "Average Latency" $result_dir/outputfile_tidb_query_${query}_ap_${thread}_ap/chbenchmark_*.summary.json | awk -F':' '{print $NF}')
 tp_p99_rt=$(grep 99th $result_dir/outputfile_tidb_query_${query}_ap_${thread}_tp/tpcc_*.summary.json | awk -F':' '{print $NF}' | sed 's/,//g')
 echo -e "$query\t$ap_avg_rt\t$tp_p99_rt\t$qps\t$tps" >> $record_dir/ch_benchmark_test.txt
+cp $result_dir/${query}_analyze.txt record_dir/${query}_analyze_t_${thread}.txt
